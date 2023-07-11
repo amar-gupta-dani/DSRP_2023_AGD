@@ -1,0 +1,62 @@
+---
+title: "Lab 5"
+author: "Amar Dani"
+output: html_document
+date: "2023-07-11"
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+```
+```{r}
+fortune_1000 <- read.csv('/Users/sandeep/Downloads/DSRP_2023_AGD/csv_files/Fortune_1000.csv')
+fortune_1000
+```
+```{r}
+filter(fortune_1000, sector == "Financials")
+```
+```{r}
+mini_fortune <- select(fortune_1000, company, num..of.employees:state, -sector)
+mini_fortune
+```
+```{r}
+big_fortune_1000 <- mutate(fortune_1000, prof_margin = profit/revenue * 100, reduced_revenue = revenue/1000)
+select(big_fortune_1000, company, revenue, profit, prof_margin)
+```
+```{r}
+summarize(big_fortune_1000, avg_prof_margin = mean(na.omit(prof_margin)), .by = sector)
+```
+```{r}
+select(arrange(big_fortune_1000, prof_margin, sector), company, revenue, profit, prof_margin, sector, everything())
+```
+```{r}
+big_fortune_1000_less_sector <- filter(big_fortune_1000, sector %in% c("Financials", "Technology", "Health Care", "Energy", "Media"))
+```
+
+```{r}
+ggplot(data = big_fortune_1000_less_sector, aes(x = reduced_revenue, y = profit)) + geom_jitter(aes(color = sector)) +
+  scale_x_continuous(breaks = c(0, 100, 200, 300)) + scale_y_continuous(breaks = c(0,25000,50000, 75000)) +
+  theme_solarized(light=F) + 
+  labs(
+    title = 'Revenue vs. Profit of the Fortune 1000',
+    subtitle = 'Colors are different sectors',
+    x = 'Revenue (billions of $)',
+    y = 'Profit (millions of $)',
+    caption = 'Fortune 1000',
+    color = 'Sector'
+  ) + 
+  theme(
+    plot.title = element_text(face = 'bold.italic',size=20, color='white'),
+    plot.subtitle = element_text(size = 12, color = 'white'),
+    axis.title.x = element_text(face = 'bold.italic',size=10, color='white'),
+    axis.title.y = element_text(face = 'bold.italic',size=10, color='white'),
+    plot.caption = element_text(size=8, face='italic',color='grey70', hjust=0),
+    axis.text.x = element_text(face = 'bold.italic',size=10, color='white'),
+    axis.text.y = element_text(face = 'bold.italic',size=10, color='white'),
+    legend.title = element_text(size=8, face = 'bold.italic', color = 'white')
+    #legend.position = c(0.85,0.07),
+  )
+```
+

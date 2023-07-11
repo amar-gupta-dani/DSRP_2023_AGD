@@ -1,0 +1,137 @@
+---
+title: "Star Wars + dplyr"
+author: "Amar Dani"
+output: html_document
+date: "2023-07-11"
+---
+
+```{r setup}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+head(starwars)
+```
+
+## Subset rows with `filter`
+
+`filter()` allows us to subset the **rows** of a dataset based on the values
+
+```{r}
+# Filter for rows with human Star Wars characters
+filter(starwars, species == "Human")
+```
+
+```{r}
+# Filter for rows with human Star Wars characters
+filter(starwars, species == "Human", sex == "male")
+```
+
+We can use different comparison operators to filter:
+
+-   `!` is "not
+
+-   `==` is "equal"
+
+-   `&` is "and"
+
+-   `|` is "or"
+
+-   `is.na()` returns true if value is NA
+
+```{r}
+filter(starwars, is.na(mass))
+filter(starwars, species != "Human")
+```
+
+variable_name `%in%` vector_of_values returns TRUE if the value of variable_names is equal to one of the values in vector_of_values. This is a shortcut for variable_name == vector_of_values[1] \| variable_name == vector_of_value[2]...
+
+```{r}
+skin_color <- "grey"
+skin_color %in% c("yellow","fair","tan") # This would return false because grey is not in this vector
+
+filter(starwars, hair_color %in% c("blond", "brown"))
+```
+
+grepl("characters_of_interest", variable_name) returns TRUE if the value of variable_name contains the characters_of_interest
+
+```{r}
+filter(starwars, grepl("blond",hair_color))
+```
+
+```{r}
+filter(starwars, grepl("blue", eye_color))
+```
+
+You can use `<`,`>`,`<=`,`>=` to compare numeric variables or categorical variables
+
+-   nominal categorical variables (character vectors) are ranked alphabetically
+
+-   ordinal categorical variables (factors) are ranked based on the built-in order
+
+`between(x, left, right)` is shorthand for `x >= left & x <= right`
+
+```{r}
+filter(starwars, is.na(hair_color))
+```
+
+```{r}
+filter(starwars, height < 100 & species != "Droid")
+```
+
+```{r}
+filter(starwars, between(birth_year, 100, 200))
+```
+
+## Order rows with `arrange`
+
+`arrange()` reorders rows based on the values of column(s). Character order goes by aAbBcCdD.... If multiple inputs are given to sort by, it'll arrange by one column and then arrange by the next column and so on. For instance `arrange(starwars, species, height)` would first sort by speices and then by height The end result is groups of species ordered by height.
+
+```{r}
+arrange(starwars, species)
+```
+
+```{r}
+arrange(starwars, species, desc(birth_year))
+```
+
+```{r}
+arrange(starwars, desc(height))
+```
+
+```{r}
+arrange(starwars, height, species)
+```
+
+```{r}
+arrange(starwars, hair_color, eye_color)
+```
+
+## Selecting columns with `select`
+Use `select(df, col1:col2)` to only see columns between col1 and col2. Use `select(df, -col)` to remove a column. Use `select(df, col1, everything())` to move col1 to the front (everything() means everything else). 
+
+`stars_with("abc")` matches column names that start with "abc"
+`ends_with("abc")` matches columns names that end with "abc"
+`contains("abc")` matches column names that contain "abc"
+
+```{r}
+select(starwars, name, homeworld, species)
+```
+```{r}
+select(starwars, name, hair_color:birth_year)
+```
+## Add new variables with `mutate`
+```{r}
+starwars_small <- select(starwars, height, mass, species)
+mutate(starwars_small, height_m = height/100)
+```
+```{r}
+mutate(starwars, mass_lbs = mass/2.2)
+```
+
+
+
+
+
+
