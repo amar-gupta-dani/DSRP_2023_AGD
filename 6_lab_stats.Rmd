@@ -1,0 +1,15 @@
+```{r}
+fortune_1000 <- read.csv('/Users/sandeep/Downloads/DSRP_2023_AGD/csv_files/Fortune_1000.csv')
+big_fortune_1000 <- mutate(fortune_1000, prof_margin = profit/revenue * 100, reduced_revenue = revenue/1000)
+companies_in_MN <- select(filter(big_fortune_1000, state == "MN"), company, prof_margin, state)
+companies_in_US <- select(filter(big_fortune_1000, state != "MN"), company, prof_margin, state)
+```
+
+### Null Hypothesis: The profit margins of companies headquartered in Minnesota is equal to the profit margins of companies headquartered elsewhere in the U.S.
+
+### Alternate Hypothesis: The profit margins of companies headquartered in Minnesota is less than the profit margins of companies headquartered elsewhere in the U.S.
+
+```{r}
+t.test(companies_in_MN$prof_margin, na.omit(companies_in_US$prof_margin))
+```
+
