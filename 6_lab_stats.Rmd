@@ -3,13 +3,55 @@ fortune_1000 <- read.csv('/Users/sandeep/Downloads/DSRP_2023_AGD/csv_files/Fortu
 big_fortune_1000 <- mutate(fortune_1000, prof_margin = profit/revenue * 100, reduced_revenue = revenue/1000)
 companies_in_MN <- select(filter(big_fortune_1000, state == "MN"), company, prof_margin, state)
 companies_in_US <- select(filter(big_fortune_1000, state != "MN"), company, prof_margin, state)
+fortune_1000
 ```
+## T-test Hypotheses
 
 ### Null Hypothesis: The profit margins of companies headquartered in Minnesota is equal to the profit margins of companies headquartered elsewhere in the U.S.
 
 ### Alternate Hypothesis: The profit margins of companies headquartered in Minnesota is less than the profit margins of companies headquartered elsewhere in the U.S.
 
 ```{r}
-t.test(companies_in_MN$prof_margin, na.omit(companies_in_US$prof_margin))
+# t.test(col1, col2, paired = T/F, alternative, conf_lvl, mu)
+
+t_test_val <- t.test(companies_in_MN$prof_margin, na.omit(companies_in_US$prof_margin))
+t_test_val
+```
+## ANOVA in R using 'aov'
+
+```{r}
+#aov(data = df, numeric_var ~ categorical_var)
+
+anova_results <- aov(data = iris, Sepal.Length ~ Species)
+summary(anova_results)
+TukeyHSD(anova_results)
+```
+## ANOVA Hypotheses
+
+### Null Hypothesis: The average number of employees in every sector is equal
+
+### Alternative Hypothesis: The average number of employees in every sector is not equal
+
+```{r}
+aov_results <- aov(data = fortune_1000, num..of.employees ~ sector)
+summary(aov_results)
+```
+
+## Chi Square Hypotheses
+
+### Null Hypothesis: There is no relationship between whether a company is profitable and the state it is headquartered in.
+
+### Alternative Hypothesis: There is a relationship between whether a company is profitable and the state it is headquartered in.
+
+```{r}
+library(corrplot)
+t <- table(fortune_1000$state, fortune_1000$profitable)
+t
+
+chi <- chisq.test(t)
+chi$p.value
+chi$residuals
+
+corrplot(chi$residuals, is.cor = F)
 ```
 

@@ -1,0 +1,30 @@
+---
+title: "Day_7_Work_Labs"
+author: "Amar Dani"
+date: "2023-07-14"
+output: html_document
+---
+# Unsupervised Learning Models
+
+```{r}
+iris
+iris_num <- select(iris, -Species)
+iris_num
+```
+```{r}
+pcas <- prcomp(iris_num, scale. = T)
+pcas
+summary(pcas)
+```
+```{r}
+pcas$rotation
+pca_vals <- as.data.frame(pcas$x)
+pca_vals$Species <- iris$Species
+```
+```{r}
+library(ggthemes)
+library(ggplot2)
+ggplot(pca_vals, aes(PC1, PC2, color = Species)) + geom_point() + theme_minimal()
+```
+
+
