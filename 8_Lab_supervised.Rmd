@@ -12,6 +12,7 @@ library(ggplot2)
 library(rsample)
 library(parsnip) 
 library(ggthemes)
+library(MLmetrics)
 ```
 
 ```{r}
@@ -36,7 +37,7 @@ pcas_vals$sector <- num_fortune_1000_sectors$sector
 pcas_vals
 ```
 ```{r}
-reduced_pcas_vals <- filter(pcas_vals, sector == c("Retailing","Technology","Industrials", "Financials", "Business Services"))
+reduced_pcas_vals <- filter(pcas_vals, sector == c("Technology","Financials"))
 ggplot(reduced_pcas_vals, aes(PC1, PC3, color=sector)) + geom_point() + theme_minimal()
 ```
 ```{r}
@@ -60,6 +61,71 @@ ggplot(fortuneCors, aes(x = Var1, y = Var2, fill=value)) + geom_tile() + scale_f
   )
 ```
 ```{r}
+# Regression Dataset Splits
 
+set.seed(71823) # set seed to produce same results
+
+# Classification Dataset Splits
+class_split <- initial_split(num_fortune_1000_sectors, prop = .75) 
+
+class_train <- training(class_split) 
+class_test <- testing(class_split)
+```
+
+```{r}
+binary_train_data <- filter(class_train, sector %in% c("Financials", "Technology"))
+binary_test_data <- filter(class_test, sector %in% c("Financials", "Technology"))
+
+log_fit <- logistic_reg() |> set_engine("glm") |> set_mode("classification") |> fit(as.factor(sector) ~ revenue + profit + num..of.employees, data = binary_train_data) 
+
+log_fit$fit
+summary(log_fit$fit)
+```
+```{r}
+eigenvectors <- (pcas$rotation)^2
+
+evecs <- eigenvectors/sum(eigenvectors)
+evecs
+```
+```{r}
+library(Metrics)
+library(caret)
+fortunePred <- binary_test_data
+fortunePred$logReg <- predict(log_fit, binary_test_data)$.pred_class
+
+#fortunePred$sector
+#fortunePred$logReg
+
+actual <- factor(fortunePred$sector)
+pred <- factor(fortunePred$logReg)
+
+confusionMatrix(pred, actual, mode = "everything", positive = "Financials")
+
+
+```
+```{r}
+
+train_class_data <- training(class_split)
+test_class_data <- testing(class_split)
+
+boost_tree_fit <- boost_tree() |> set_engine("xgboost") |> set_mode("classification") |> fit(as.factor(sector) ~ revenue + profit + num..of.employees, data = binary_train_data)
+
+boost_tree_fit$fit
+#summary(boost_tree_fit$fit)
+
+fortunePred_f1 <- binary_test_data
+fortunePred$boost <- predict(boost_tree_fit, binary_test_data)$.pred_class
+
+#predict(boost_tree_fit, binary_test_data)$.pred_class
+
+actual_f1 <- factor(fortunePred_f1$sector)
+pred_f1 <- factor(fortunePred$boost)
+
+
+
+pred_f1
+actual_f1
+
+confusionMatrix(pred_f1, actual_f1, mode = "everything", positive = "Financials")
 ```
 
