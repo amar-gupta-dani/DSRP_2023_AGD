@@ -20,11 +20,11 @@ Doing some more work with ggplot and ggthemes. Throughout the lectures and labs 
 ## Lecture and Lab 5
 
 Here we did dataset manipulation using *dplyr*. We worked with the pre-loaded starwars dataset. Here's a summary of what I learned:
-1. You use ```R filter() ``` to subset rows. 
-2. To compare variables you can use  ```R <, >, <=, >=```
-3. Order rows with ```R arrange()``` not used too often but nice to move some columns around and order cases within a column descending or ascending.
-4. Choose certain columns with ```R select()``` you can choose to view a couple of columns but also to search for and remove columns.
-5. Add new columns using ```R mutate()```
+1. You use ```filter()``` to subset rows. 
+2. To compare variables you can use  ```<, >, <=, >=```
+3. Order rows with ```arrange()``` not used too often but nice to move some columns around and order cases within a column descending or ascending.
+4. Choose certain columns with ```select()``` you can choose to view a couple of columns but also to search for and remove columns.
+5. Add new columns using ```mutate()```
 
 Eventually I used these functions to add a profit margin column to my dataset and made a visualization with the profit margins of each sector.
 
@@ -41,6 +41,6 @@ Supervised is used to predict or classify using data it has been trained on. In 
 
 It was somewhat successful, receiving an F1 score of 0.7059 when classifying Financial companies. The other model I created was a boosted decision tree to perform the same function: to classify whether a company was in Financials or Tech based on profit, revenue, and number of employees.
 
-![Log Reg]([]https://www.google.com/url?sa=i&url=https%3A%2F%2Faffine.ai%2Fgradient-boosting-trees-for-classification-a-beginners-guide%2F&psig=AOvVaw3PL-7NEpK1NNWRPx_I8ipE&ust=1689798120659000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCKifhdiKmYADFQAAAAAdAAAAABAD)
+![Boosted Trees]([]https://www.google.com/url?sa=i&url=https%3A%2F%2Faffine.ai%2Fgradient-boosting-trees-for-classification-a-beginners-guide%2F&psig=AOvVaw3PL-7NEpK1NNWRPx_I8ipE&ust=1689798120659000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCKifhdiKmYADFQAAAAAdAAAAABAD)
 
 This was surprising less aaccurate than the logistic regression model. This model received an F1 score of 0.6512. I believe the logistic regression model is best suited to separate into 2 different groups whereas the boosted trees is better for several groups.
