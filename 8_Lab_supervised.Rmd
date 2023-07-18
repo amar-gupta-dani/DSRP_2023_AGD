@@ -1,0 +1,65 @@
+---
+title: "8_Lab_supervised"
+author: "Amar Dani"
+date: "2023-07-18"
+output: html_document
+---
+
+```{r setup}
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(rsample)
+library(parsnip) 
+library(ggthemes)
+```
+
+```{r}
+fortune_1000 <- read.csv('/Users/sandeep/Downloads/DSRP_2023_AGD/csv_files/Fortune_1000.csv')
+#fortune_1000
+num_fortune_1000 <- na.omit(select(fortune_1000, revenue:num..of.employees))
+#mutate(fortune_1000, )
+num_fortune_1000_sectors <- na.omit(select(fortune_1000, revenue:num..of.employees,sector))
+big_num_fortune_1000 <- na.omit(select(fortune_1000, revenue:num..of.employees,sector, state))
+#num_fortune_1000
+#View(fortune_1000)
+```
+
+```{r}
+pcas <- prcomp(num_fortune_1000, scale. = T)
+pcas
+summary(pcas)
+```
+```{r}
+pcas_vals <- as.data.frame(pcas$x)
+pcas_vals$sector <- num_fortune_1000_sectors$sector
+pcas_vals
+```
+```{r}
+reduced_pcas_vals <- filter(pcas_vals, sector == c("Retailing","Technology","Industrials", "Financials", "Business Services"))
+ggplot(reduced_pcas_vals, aes(PC1, PC3, color=sector)) + geom_point() + theme_minimal()
+```
+```{r}
+fortuneAllNumeric <- mutate(big_num_fortune_1000, sector = as.integer(as.factor(sector)), state = as.integer(as.factor(state)))
+fortuneAllNumeric
+fortuneCors <- cor(fortuneAllNumeric) |> melt() |> as.data.frame()
+
+ggplot(fortuneCors, aes(x = Var1, y = Var2, fill=value)) + geom_tile() + scale_fill_gradient2(low = "red", high ='blue', mid = 'white', midpoint = 0) +
+  labs(
+    title = 'Tile Map of the Fortune 1000',
+    x = 'Variables 1',
+    y = 'Variables 2',
+    caption = 'Fortune 1000 (2022)'
+  ) + 
+  theme(
+    plot.title = element_text(face = 'bold.italic',size=20),
+    axis.title.x = element_text(face = 'bold.italic',size=10),
+    axis.title.y = element_text(face = 'bold.italic',size=10),
+    plot.caption = element_text(size=8, face='italic',color='grey70', hjust=0)
+    #axis.text.x = element_text(angle=90,vjust=0.8,size=10)
+  )
+```
+```{r}
+
+```
+

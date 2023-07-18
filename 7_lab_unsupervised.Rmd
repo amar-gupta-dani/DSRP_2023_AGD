@@ -20,6 +20,7 @@ summary(pcas)
 pcas$rotation
 pca_vals <- as.data.frame(pcas$x)
 pca_vals$Species <- iris$Species
+pca_vals
 ```
 ```{r}
 library(ggthemes)
